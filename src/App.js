@@ -1,7 +1,28 @@
 import logo from './logo.svg';
 import './App.css';
+import React, { useState } from 'react';
+import JsonViewer from './components/viewer';
+import './styles/contract-viewing.css';
 
 function App() {
+  const [fileContent, setFileContent] = useState('');
+
+  const handleFileUpload = (event) => {
+    const file = event.target.files[0];
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      setFileContent(e.target.result);
+    };
+    reader.readAsText(file);
+  };
+
+  React.useEffect(() => {
+    document.getElementById('fileUpload').addEventListener('change', handleFileUpload);
+    return () => {
+      document.getElementById('fileUpload').removeEventListener('change', handleFileUpload);
+    };
+  }, []);
+
   return (
     <div className="App">
       <header className="App-header">
@@ -13,6 +34,9 @@ function App() {
         <label htmlFor="fileUpload" className="App-upload-button">
           Upload File
         </label>
+        <div className="json-viewer-container">
+          <JsonViewer data={fileContent} />
+        </div>
       </header>
     </div>
   );

@@ -1,0 +1,26 @@
+.contract-viewing {
+    h1, h2, h3, h4, h5, h6 {
+        display: inline;
+    }
+
+    p, div, span, ul, ol, li, table, th, td, clause{
+        text-align: left;
+        margin: 0;
+        padding: 0;
+    }
+    clause {
+        margin-top: 20px;
+    }
+}
+.json-viewer-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: max-content;
+    width: 90%;
+    background-color: #896bfd34;
+    padding: 20px;
+    border-radius: 10px;
+    box-sizing: border-box;
+    padding:20px 10px;
+}
