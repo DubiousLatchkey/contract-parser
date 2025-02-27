@@ -37,7 +37,8 @@ const renderRecursive = (data, settings) => {
         ));
     }
 
-    // Base case:  If there are no children, just return this simple object
+    // Base case:  If there are no children, just return rendered text.  
+    // You could add behavior here for rendering images or other types of data if it is present
     if (!data.children) {
         return renderText(data, settings);
     }
@@ -54,7 +55,9 @@ const renderRecursive = (data, settings) => {
         }
 
         if (data.type === 'mention') {
+            // Render a mention
             const Tag = data.type
+            // Ignoring value tag as the children allow for more complex values
             if (mentions[data.id]) {
                 // First mention dominates
                 return (
@@ -68,13 +71,17 @@ const renderRecursive = (data, settings) => {
                         {renderRecursive(child, settings)}
                     </React.Fragment>
                 ));
+                // Nothing is currently done with variable type as no functionality was defined
+                // Background color is not currently saved to the mentions object, though it could be
+                // Styles like bold and underline are not carried to mentions to make them pop more, but that could be changed
                 return (
-                    <Tag style={{ backgroundColor: data.color }} title={data.title}>
+                    <Tag style={{ backgroundColor: data.color }} title={data.title} variableType={data.variableType}>
                         {mentions[data.id]}
                     </Tag>
                 );
             }
         } else if (data.type === 'clause') {
+            // Render a clause
             const Tag = data.type
             let clauseCounter = settings.clauseCounter + 1;
             settings.clauseCounter = 0; // Reset clause counter to zero for subclauses
@@ -93,7 +100,7 @@ const renderRecursive = (data, settings) => {
             settings.subclauseLevel -= 1;
             return childrenTags;
         } else {
-            // Generic html tag
+            // Render a generic html tag
             const Tag = data.type;
             return (
                 <Tag title={data.title}>
