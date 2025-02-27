@@ -17,6 +17,7 @@ function App() {
   };
 
   React.useEffect(() => {
+    document.title = 'Contract Viewer';
     document.getElementById('fileUpload').addEventListener('change', handleFileUpload);
     return () => {
       document.getElementById('fileUpload').removeEventListener('change', handleFileUpload);

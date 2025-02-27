@@ -1,6 +1,5 @@
 import React from 'react';
 
-let clauseCounter = 0;
 let mentions = {};
 function renderText(data, settings) {
     // Render text
@@ -57,6 +56,7 @@ const renderRecursive = (data, settings) => {
         if (data.type === 'mention') {
             const Tag = data.type
             if (mentions[data.id]) {
+                // First mention dominates
                 return (
                     <Tag style={{ backgroundColor: data.color }} title={data.title}>
                         {mentions[data.id]}
@@ -76,9 +76,11 @@ const renderRecursive = (data, settings) => {
             }
         } else if (data.type === 'clause') {
             const Tag = data.type
-            clauseCounter++;
-            return (
-                <Tag description={`${data.title}`} style={{ display: 'block' }}>
+            let clauseCounter = settings.clauseCounter + 1;
+            settings.clauseCounter = 0; // Reset clause counter to zero for subclauses
+            settings.subclauseLevel += 1; // Can provide custom styling for subclauses if wanted
+            let childrenTags = (
+                <Tag title={`${data.title}`} style={{ display: 'block', marginLeft: `${(settings.subclauseLevel - 1) * 20}px` }}>
                     {clauseCounter}.&nbsp;
                     {data.children.map((child, index) => (
                         <React.Fragment key={index}>
@@ -87,11 +89,14 @@ const renderRecursive = (data, settings) => {
                     ))}
                 </Tag>
             );
+            settings.clauseCounter = clauseCounter;
+            settings.subclauseLevel -= 1;
+            return childrenTags;
         } else {
-
+            // Generic html tag
             const Tag = data.type;
             return (
-                <Tag description={data.title}>
+                <Tag title={data.title}>
                     {data.children.map((child, index) => (
                         <React.Fragment key={index}>
                             {renderRecursive(child, settings)}
@@ -109,15 +114,16 @@ const JsonViewer = ({ data }) => {
 
     
     if (!data) {
-        return <div>No data available</div>;
+        return <div style={{ textAlign: 'center' }}>No data yet</div>;
     }
     const parsedData = JSON.parse(data);
-    clauseCounter = 0;
     mentions = {};
     const settings = {
         bold: false,
         underline: false,
         italics: false,
+        clauseCounter: 0,
+        subclauseLevel: 0,
     };
     
     const renderedData = renderRecursive(parsedData, settings);
